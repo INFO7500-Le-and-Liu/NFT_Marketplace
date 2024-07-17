@@ -2,8 +2,9 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+version = "0.8.0"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
 [dependencies]
-openzeppelin = { git = "https://github.com/OpenZeppelin/openzeppelin-contracts.git", tag = "v4.7.3" }
+openzeppelin = {git = "https://github.com/OpenZeppelin/openzeppelin-contracts.git", version = "v4.7.3" }
