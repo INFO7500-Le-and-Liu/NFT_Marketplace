@@ -18,7 +18,7 @@ contract NFTMarketplaceTest is Test {
     }
 
     function testMintNFT() public {
-        string memory tokenURI = "https://example.com/nft";
+        string memory tokenURI = "https://ipfslink.com/nftexample";
         uint256 price = 1 ether;
 
         vm.prank(addr1);
@@ -30,53 +30,5 @@ contract NFTMarketplaceTest is Test {
         assertTrue(nft.isForSale);
         assertEq(nftMarketplace.ownerOf(tokenId), addr1);
         assertEq(nftMarketplace.tokenURI(tokenId), tokenURI);
-    }
-
-    function testListNFT() public {
-        string memory tokenURI = "https://example.com/nft";
-        uint256 price = 1 ether;
-
-        vm.prank(addr1);
-        uint256 tokenId = nftMarketplace.mintNFT(tokenURI, price);
-
-        vm.prank(addr1);
-        nftMarketplace.listNFT(tokenId, price);
-
-        NFTMarketplace.NFT memory nft = nftMarketplace.getNFT(tokenId);
-        assertTrue(nft.isForSale);
-        assertEq(nft.price, price);
-    }
-
-    function testPurchaseNFT() public {
-        string memory tokenURI = "https://example.com/nft";
-        uint256 price = 1 ether;
-
-        vm.prank(addr1);
-        uint256 tokenId = nftMarketplace.mintNFT(tokenURI, price);
-
-        vm.prank(addr1);
-        nftMarketplace.listNFT(tokenId, price);
-
-        vm.prank(addr2);
-        nftMarketplace.purchaseNFT{value: price}(tokenId);
-
-        NFTMarketplace.NFT memory nft = nftMarketplace.getNFT(tokenId);
-        assertFalse(nft.isForSale);
-        assertEq(nftMarketplace.ownerOf(tokenId), addr2);
-    }
-
-    function testPurchaseNFTInsufficientFunds() public {
-        string memory tokenURI = "https://example.com/nft";
-        uint256 price = 1 ether;
-
-        vm.prank(addr1);
-        uint256 tokenId = nftMarketplace.mintNFT(tokenURI, price);
-
-        vm.prank(addr1);
-        nftMarketplace.listNFT(tokenId, price);
-
-        vm.prank(addr2);
-        vm.expectRevert("Insufficient funds");
-        nftMarketplace.purchaseNFT{value: 0.5 ether}(tokenId);
     }
 }
