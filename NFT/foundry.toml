@@ -8,3 +8,9 @@ solc = "/usr/local/bin/solc"
 
 [dependencies]
 # openzeppelin = {git = "https://github.com/OpenZeppelin/openzeppelin-contracts.git", tag = "v4.7.3" }
+
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
