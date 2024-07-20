@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
-import { create } from 'ipfs-http-client';
+import ipfs from '../services/ipfsClient';
 import { signer } from '../Web3';
 
-const ipfs = create('https://ipfs.infura.io:5001');
 
-function MintNFT({ contractAddress, contractABI }) {
+
+function MintNFT({ contractAddress, contractABI ,loadNFTs}) {
   const [file, setFile] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -26,7 +26,8 @@ function MintNFT({ contractAddress, contractABI }) {
     setMinting(true);
 
     try {
-      const imageUrl = await uploadToIPFS(file);
+      const imageUrl = await uploadToIPFS(file); // debug use
+      console.log('Image URI:', imageUrl);
       const metadata = {
         name,
         description,
@@ -34,6 +35,7 @@ function MintNFT({ contractAddress, contractABI }) {
       };
       const metadataResult = await ipfs.add(JSON.stringify(metadata));
       const metadataUrl = `https://ipfs.io/ipfs/${metadataResult.path}`;
+      console.log('Metadata URL:', metadataUrl); // print the URL of the NFT
 
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       const priceInWei = ethers.utils.parseEther(price); // turn to Wei
@@ -41,6 +43,12 @@ function MintNFT({ contractAddress, contractABI }) {
       const transaction = await contract.mintNFT(metadataUrl, priceInWei);
       await transaction.wait();
       alert('NFT Minted!');
+
+      loadNFTs();
+      // clear the input
+      setFile(null);
+      setName('');
+      setDescription('');
     } catch (error) {
       console.error('Error minting NFT:', error);
     } finally {
