@@ -61,7 +61,7 @@ function MintNFT({ contractAddress, contractABI ,loadNFTs}) {
       <input type="file" onChange={onFileChange} />
       <input type="text" placeholder="NFT Name" value={name} onChange={(e) => setName(e.target.value)} />
       <input type="text" placeholder="NFT Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <input type="text" placeholder="NFT Price in ETH" value={price} onChange={(e) => setPrice(e.target.value)} /> {/* 新增价格输入 */}
+      <input type="text" placeholder="NFT Price in ETH" value={price} onChange={(e) => setPrice(e.target.value)} /> {/* new price */}
       <button onClick={mintNFT} disabled={minting}>
         {minting ? 'Minting...' : 'Mint NFT'}
       </button>

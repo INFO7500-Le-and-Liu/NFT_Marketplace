@@ -2,8 +2,8 @@
 import { Buffer } from 'buffer';
 import { create } from 'ipfs-http-client';
 
-const projectId = process.env.REACT_APP_INFURA_PROJECT_ID;
-const projectSecret = process.env.REACT_APP_INFURA_PROJECT_SECRET;
+const projectId = '666b2389d9d44c28a93a2f20cbd85f79';
+const projectSecret = 'HcUPwGRAFS34R2u7zJmWvzXE3WVrmBzen5gISkgThjJoeNzxUjdebA';
 const auth = `Basic ${Buffer.from(`${projectId}:${projectSecret}`).toString('base64')}`;
 
 const ipfs = create({
@@ -14,5 +14,8 @@ const ipfs = create({
     authorization: auth,
   }
 });
+
+console.log("Authorization Header:", auth);
+// console.log("ipfs:", ipfs);
 
 export default ipfs;
