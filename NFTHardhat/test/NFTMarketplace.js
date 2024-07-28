@@ -1,43 +1,36 @@
-// const { expect } = require("chai");
-
-const { expect } = require('chai');
-const { ethers } = require("hardhat");
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { Contract, Signer } from "ethers";
 
 describe("NFTMarketplace", function () {
-    let nftMarketplace;
-    let owner;
-    let addr1;
-    let addr2;
-    let addrs;
+  it("Should create and execute market sales", async function () {
+    const Market = await ethers.getContractFactory("NFTMarketplace");
+    const market: Contract = await Market.deploy();
+    await market.deployed();
+    const marketAddress: string = market.address;
 
-    beforeEach(async function () {
-        // get zhe accounts
-        [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    const NFT = await ethers.getContractFactory("NFT");
+    const nft: Contract = await NFT.deploy();
+    await nft.deployed();
+    const nftContractAddress: string = nft.address;
 
-        // deploy 
-        const NFTMarketplace = await ethers.getContractFactory("NFTMarketplace");
-        nftMarketplace = await NFTMarketplace.deploy();
-        await nftMarketplace.deploymentTransaction();
-    });
+    let listingPrice = await market.getListingPrice();
+    listingPrice = listingPrice.toString();
 
-    it("should mint an NFT correctly", async function () {
-        const tokenURI = "https://ipfslink.com/nftexample";
-        const price = ethers.utils.parseEther("1");
+    const auctionPrice = ethers.utils.parseUnits("1", "ether");
 
-        // use add1 to run mintNFT
-        await nftMarketplace.connect(addr1).mintNFT(tokenURI, price);
+    await nft.createToken("https://www.mytokenlocation.com");
+    await nft.createToken("https://www.mytokenlocation2.com");
 
-        // get tokenId
-        const tokenId = await nftMarketplace.connect(addr1).callStatic.mintNFT(tokenURI, price);
+    await market.createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice });
+    await market.createMarketItem(nftContractAddress, 2, auctionPrice, { value: listingPrice });
 
-        // get NFT
-        const nft = await nftMarketplace.getNFT(tokenId);
+    const signers: Signer[] = await ethers.getSigners();
+    const buyerAddress: Signer = signers[1];
 
-        // test
-        expect(nft.creator).to.equal(addr1.address);
-        expect(nft.price).to.equal(price);
-        expect(nft.isForSale).to.be.true;
-        expect(await nftMarketplace.ownerOf(tokenId)).to.equal(addr1.address);
-        expect(await nftMarketplace.tokenURI(tokenId)).to.equal(tokenURI);
-    });
+    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: auctionPrice });
+
+    const items = await market.fetchMarketItems();
+    expect(items.length).to.equal(1);
+  });
 });
