@@ -10,8 +10,13 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "rootDir": "./src",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": [
+        "./node_modules/@types",
+        "./src/global.d.ts"
+      ]
   },
+  
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
   // "files": [], // 移除或注释掉这一行
