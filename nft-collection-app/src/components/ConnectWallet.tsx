@@ -8,7 +8,7 @@ const WalletConnection: React.FC = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    // 检查是否已经连接钱包
+    // check
     const checkConnection = async () => {
       if (window.ethereum) {
         try {
@@ -20,6 +20,8 @@ const WalletConnection: React.FC = () => {
             setAccount(accounts[0]);
             setIsConnected(true);
           }
+          console.log("signer:", signer);
+          console.log("provider:", provider);
         } catch (error) {
           console.error("Error checking wallet connection:", error);
         }

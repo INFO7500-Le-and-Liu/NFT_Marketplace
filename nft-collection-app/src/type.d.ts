@@ -4,6 +4,6 @@ export interface NFT {
     name: string;
     image: string;
     description: string;
-    [key: string]: any; // 允许其他元数据字段
+    [key: string]: any; 
   }
   
