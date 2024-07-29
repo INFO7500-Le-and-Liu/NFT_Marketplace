@@ -9,7 +9,7 @@ import { NFT } from './type';
 
 import nftCollection from './abi/contract.json'; // 导入 ABI
 
-const contractAddress: string = '0x5FbDB2315678afecb367f032d93F642f64180aa3'; // 合约地址
+const contractAddress: string = '0x1F0B7cbAa20bA250961905d03c940277491025e5'; // 合约地址
 const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
 
 function App() {
