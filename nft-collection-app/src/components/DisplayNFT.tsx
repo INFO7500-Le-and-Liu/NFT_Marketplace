@@ -20,13 +20,13 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
 
   useEffect(() => {
     const fetchNFTs = async () => {
-      const jwt = process.env.PINATA_JWT;
+      const jwt = process.env.REACT_APP_PINATA_JWT;
       console.log('JWT Token:', jwt); // debug, need be removed
     
       const options = {
         method: 'GET',
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMTUxNzIxOS1iZGE1LTRhNjEtOWE3Yi05YTgyZWQ0ZDBiNmYiLCJlbWFpbCI6ImxpdS5kb25neXVAbm9ydGhlYXN0ZXJuLmVkdSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIyMGRhYmE4NjZiNTc4MWM4MjFmOCIsInNjb3BlZEtleVNlY3JldCI6IjFhNThmZDdhMDJjM2JlZjYwZTI2YmNiY2Y5OGRjNjczMTYwMTk3NzdiY2YwYmU5ZjliZWM1ZTJhMDQyMGMzMjkiLCJleHAiOjE3NTM3NzYzNjd9.0mlgz9N61CjUxf2EtYiuZUNDDfz4H-DDtYz7o8DL1UA`  // inset into header
+          Authorization: `Bearer ${jwt}`  // inset into header
         }
       };
 
@@ -75,19 +75,19 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading NFTs...</p>;
+    return <p>Loading NFTs...</p >;
   }
 
   return (
     <div>
-      {nfts.length === 0 ? <p>No NFTs found.</p> : null}
+      {nfts.length === 0 ? <p>No NFTs found.</p > : null}
       {nfts.map((nft) => (
         <div key={nft.tokenId}>
           {/* <h3>{nft.name}</h3> */}
-          {/* <img src={nft.image} alt={nft.name} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} /> */}
-          <img src={nft.image} alt={'123'} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} />
+          {/* < img src={nft.image} alt={nft.name} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} /> */}
+          < img src={nft.image} alt={'123'} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} />
 
-          {/* <p>{nft.description}</p> */}
+          {/* <p>{nft.description}</p > */}
         </div>
       ))}
     </div>
