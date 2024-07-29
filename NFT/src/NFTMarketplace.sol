@@ -3,11 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Counter.sol";
 
-contract NFTMarketplace is ERC721URIStorage,Ownable {
-    
-    Counter private _tokenIds;  // Counter utility for token IDs
+contract NFTMarketplace is ERC721URIStorage, Ownable {
+    uint256 private _currentTokenId = 0;  
     uint256[] private _allTokens; // Array to store all token IDs
 
     struct NFT {
@@ -22,18 +20,16 @@ contract NFTMarketplace is ERC721URIStorage,Ownable {
     // Events
     event NFTMinted(uint256 indexed tokenId, address indexed creator, string tokenURI, uint256 price);
     event NFTListed(uint256 indexed tokenId, uint256 price);
-    event NFTPurchased(uint256 indexed tokenId, address indexed buyer, uint256 price);
+    // event NFTPurchased(uint256 indexed tokenId, address indexed buyer, uint256 price);
 
-    constructor() ERC721("NFTMarketplace", "NFTM") Ownable(msg.sender) {
-        _tokenIds = new Counter(0);  // Initialize the counter to 0
-    }
+    constructor() ERC721("NFTMarketplace", "NFTM") Ownable(msg.sender) {}
 
     // Function to mint a new NFT
     function mintNFT(string memory tokenURI, uint256 price) public returns (uint256) {
         require(price > 0, "Price must be greater than zero");
 
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
+        _currentTokenId++;  // Increment the token ID counter
+        uint256 newTokenId = _currentTokenId;
 
         _mint(msg.sender, newTokenId); // Mint the new token
         _setTokenURI(newTokenId, tokenURI); // Set the token URI
