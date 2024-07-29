@@ -46,7 +46,7 @@ function App() {
       <WalletConnection/>
       <UploadComponent />
       {/* <MintNFT contractAddress={contractAddress} contractABI={contractABI}/> */}
-      <DisplayNFTs nfts={nfts} />
+      <DisplayNFTs/>
     </div>
   );
 }
