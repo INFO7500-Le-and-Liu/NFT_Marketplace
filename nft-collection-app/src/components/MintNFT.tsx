@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import { signer } from '../Web3'; 
 
-// 替换为你的 Pinata 配置信息
 const JWT = "PINATA_JWT"; // 确保使用正确的 JWT
 const GATEWAY = "yellow-wrong-piranha-786.mypinata.cloud"; // 确保使用正确的网关 URL
 
@@ -24,97 +23,99 @@ const MintNFT: React.FC<MintNFTProps> = ({ contractAddress, contractABI }) => {
     }
   };
 
-  const uploadToIPFS = async (file: File): Promise<string> => {
-    if (!file) throw new Error('No file selected');
+  const uploadToIPFS = (file: File): Promise<string> => {
+    if (!file) return Promise.reject(new Error('No file selected'));
     
     const data = new FormData();
     data.append("file", file);
 
-    try {
-      const response = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {  //401
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${JWT}`,
-        },
-        body: data,
+    return fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${JWT}`,
+      },
+      body: data,
+    })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => {
+            console.error('Error response from Pinata:', text);
+            return Promise.reject(new Error('Failed to upload file to IPFS'));
+          });
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (result.IpfsHash) {
+          return `https://${GATEWAY}/ipfs/${result.IpfsHash}`;
+        } else {
+          return Promise.reject(new Error('Failed to upload file to IPFS'));
+        }
       });
-
-      // 调试响应
-      if (!response.ok) {
-        console.error('Error response from Pinata:', await response.text());
-        throw new Error('Failed to upload file to IPFS');
-      }
-
-      const result = await response.json();
-      if (result.IpfsHash) {
-        return `https://${GATEWAY}/ipfs/${result.IpfsHash}`;
-      } else {
-        throw new Error('Failed to upload file to IPFS');
-      }
-    } catch (error) {
-      console.error('Error uploading file to IPFS:', error);
-      throw error;
-    }
   };
 
-  const mintNFT = async () => {
+  const mintNFT = () => {
     if (!file || !name || !description || !price) return;
     setMinting(true);
 
-    try {
-      const imageUrl = await uploadToIPFS(file);  //401
-      console.log('Image URI:', imageUrl);
+    uploadToIPFS(file)
+      .then(imageUrl => {
+        console.log('Image URI:', imageUrl);
 
-      const metadata = {
-        name,
-        description,
-        image: imageUrl,
-      };
+        const metadata = {
+          name,
+          description,
+          image: imageUrl,
+        };
 
-      // 上传 metadata 到 IPFS
-      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-      const metadataData = new FormData();
-      metadataData.append("file", metadataBlob, "metadata.json");
+        const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+        const metadataData = new FormData();
+        metadataData.append("file", metadataBlob, "metadata.json");
 
-      const metadataResponse = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${JWT}`,
-        },
-        body: metadataData,
-      });
+        return fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${JWT}`,
+          },
+          body: metadataData,
+        });
+      })
+      .then(metadataResponse => {
+        if (!metadataResponse.ok) {
+          return metadataResponse.text().then(text => {
+            console.error('Error response from Pinata:', text);
+            return Promise.reject(new Error('Failed to upload metadata to IPFS'));
+          });
+        }
+        return metadataResponse.json();
+      })
+      .then(metadataResult => {
+        if (metadataResult.IpfsHash) {
+          const metadataUrl = `https://${GATEWAY}/ipfs/${metadataResult.IpfsHash}`;
+          console.log('Metadata URL:', metadataUrl);
 
-      // 调试响应
-      if (!metadataResponse.ok) {
-        console.error('Error response from Pinata:', await metadataResponse.text());
-        throw new Error('Failed to upload metadata to IPFS');
-      }
+          const contract = new ethers.Contract(contractAddress, contractABI, signer);
+          const priceInWei = ethers.utils.parseEther(price);
 
-      const metadataResult = await metadataResponse.json();
-      if (metadataResult.IpfsHash) {
-        const metadataUrl = `https://${GATEWAY}/ipfs/${metadataResult.IpfsHash}`;
-        console.log('Metadata URL:', metadataUrl);
-
-        const contract = new ethers.Contract(contractAddress, contractABI, signer);
-        const priceInWei = ethers.utils.parseEther(price);
-
-        const transaction = await contract.mintNFT(metadataUrl, priceInWei);
-        await transaction.wait();
+          return contract.mintNFT(metadataUrl, priceInWei);
+        } else {
+          return Promise.reject(new Error('Failed to upload metadata to IPFS'));
+        }
+      })
+      .then(transaction => transaction.wait())
+      .then(() => {
         alert('NFT Minted!');
-
-        // 清除输入
         setFile(null);
         setName('');
         setDescription('');
         setPrice('');
-      } else {
-        throw new Error('Failed to upload metadata to IPFS');
-      }
-    } catch (error) {
-      console.error('Error minting NFT:', error);
-    } finally {
-      setMinting(false);
-    }
+      })
+      .catch(error => {
+        console.error('Error minting NFT:', error);
+      })
+      .finally(() => {
+        setMinting(false);
+      });
   };
 
   return (
