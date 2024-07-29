@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { signer } from './Web3';
 import ConnectWallet from './components/Wallet';
-import MintNFT from './components/MintNFT';
+// import MintNFT from './components/MintNFT';
 import DisplayNFTs from './components/DisplayNFT';
 import { NFT } from './type';
 
@@ -40,8 +40,9 @@ function App() {
   return (
     <div className="App">
       <ConnectWallet />
-      <MintNFT contractAddress={contractAddress} contractABI={contractABI} loadNFTs={loadNFTs} />
-      <DisplayNFTs nfts={nfts} />
+      {/* <MintNFT contractAddress={contractAddress} contractABI={contractABI} loadNFTs={loadNFTs} /> */}
+      <h1>NFT Gallery</h1>
+      <DisplayNFTs/>
     </div>
   );
 }
