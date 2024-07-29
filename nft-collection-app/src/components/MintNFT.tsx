@@ -1,78 +1,80 @@
 import React, { useState } from 'react';
-import { ethers } from 'ethers';
-import ipfs from '../services/ipfsClient';
-import { signer } from '../Web3';
 
-interface MintNFTProps {
-  contractAddress: string;
-  contractABI: any;
-  loadNFTs: () => void;
-}
+const JWT = "PINATA_JWT";
+const GATEWAY = "my-example.mypinata.cloud";
 
-const MintNFT: React.FC<MintNFTProps> = ({ contractAddress, contractABI, loadNFTs }) => {
+const PinFile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [minting, setMinting] = useState(false);
+  const [cid, setCid] = useState<string>('');
+  const [fileContent, setFileContent] = useState<string>('');
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
 
+  // 处理文件选择
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
   };
 
-  const uploadToIPFS = async (file: File) => {
-    const result = await ipfs.add(file);
-    return `https://ipfs.io/ipfs/${result.path}`;
+  // 上传文件到 IPFS
+  const pinFileToIPFS = async () => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+
+      const request = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${JWT}`,
+        },
+        body: data,
+      });
+
+      const response = await request.json();
+      if (response.IpfsHash) {
+        setCid(response.IpfsHash);
+        console.log('File pinned with CID:', response.IpfsHash);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const mintNFT = async () => {
-    if (!file || !name || !description || !price) return;
-    setMinting(true);
-
+  // 从 IPFS 获取文件
+  const fetchFileFromIPFS = async () => {
+    if (!cid) return;
+    setFetching(true);
     try {
-      const imageUrl = await uploadToIPFS(file);
-      console.log('Image URI:', imageUrl);
-      const metadata = {
-        name,
-        description,
-        image: imageUrl,
-      };
-      const metadataResult = await ipfs.add(JSON.stringify(metadata));
-      const metadataUrl = `https://ipfs.io/ipfs/${metadataResult.path}`;
-      console.log('Metadata URL:', metadataUrl);
-
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const priceInWei = ethers.utils.parseEther(price);
-
-      const transaction = await contract.mintNFT(metadataUrl, priceInWei);
-      await transaction.wait();
-      alert('NFT Minted!');
-
-      loadNFTs();
-      setFile(null);
-      setName('');
-      setDescription('');
-      setPrice('');
+      const url = `https://${GATEWAY}/ipfs/${cid}`;
+      const request = await fetch(url);
+      const response = await request.text();
+      setFileContent(response);
+      console.log('File content:', response);
     } catch (error) {
-      console.error('Error minting NFT:', error);
+      console.error('Error fetching file:', error);
     } finally {
-      setMinting(false);
+      setFetching(false);
     }
   };
 
   return (
     <div>
+      <h1>IPFS File Upload and Fetch</h1>
       <input type="file" onChange={onFileChange} />
-      <input type="text" placeholder="NFT Name" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="text" placeholder="NFT Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <input type="text" placeholder="NFT Price in ETH" value={price} onChange={(e) => setPrice(e.target.value)} />
-      <button onClick={mintNFT} disabled={minting}>
-        {minting ? 'Minting...' : 'Mint NFT'}
+      <button onClick={pinFileToIPFS} disabled={uploading}>
+        {uploading ? 'Uploading...' : 'Upload File'}
       </button>
+      <button onClick={fetchFileFromIPFS} disabled={fetching || !cid}>
+        {fetching ? 'Fetching...' : 'Fetch File'}
+      </button>
+      {fileContent && <pre>{fileContent}</pre>}
     </div>
   );
 };
 
-export default MintNFT;
+export default PinFile;
