@@ -15,32 +15,32 @@ const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
 function App() {
   const [nfts, setNfts] = useState<NFT[]>([]);
 
-  const loadNFTs = async () => {
-    try {
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const tokenIds: number[] = await contract.getAllTokens();
-      const nftData: NFT[] = await Promise.all(
-        tokenIds.map(async (tokenId: number) => {
-          const tokenURI: string = await contract.tokenURI(tokenId);
-          const response = await fetch(tokenURI);
-          const metadata: any = await response.json();
-          return { tokenId, ...metadata };
-        })
-      );
-      setNfts(nftData);
-    } catch (err) {
-      console.error('Error loading NFTs:', err);
-    }
-  };
+  // const loadNFTs = async () => {
+  //   try {
+  //     const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  //     const tokenIds: number[] = await contract.getAllTokens();
+  //     const nftData: NFT[] = await Promise.all(
+  //       tokenIds.map(async (tokenId: number) => {
+  //         const tokenURI: string = await contract.tokenURI(tokenId);
+  //         const response = await fetch(tokenURI);
+  //         const metadata: any = await response.json();
+  //         return { tokenId, ...metadata };
+  //       })
+  //     );
+  //     setNfts(nftData);
+  //   } catch (err) {
+  //     console.error('Error loading NFTs:', err);
+  //   }
+  // };
 
-  useEffect(() => {
-    loadNFTs();
-  }, []);
+  // useEffect(() => {
+  //   loadNFTs();
+  // }, []);
 
   return (
     <div className="App">
       <ConnectWallet />
-      <MintNFT contractAddress={contractAddress} contractABI={contractABI} loadNFTs={loadNFTs} />
+      <MintNFT contractAddress={contractAddress} contractABI={contractABI}/>
       <DisplayNFTs nfts={nfts} />
     </div>
   );
