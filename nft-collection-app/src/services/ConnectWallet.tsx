@@ -1,67 +1,72 @@
-// src/services/ConnectWallet.tsx
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const ConnectWallet: React.FC = () => {
-  const [connectedAccount, setConnectedAccount] = useState<string | null>(null);
+const WalletConnection: React.FC = () => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [account, setAccount] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+
+  useEffect(() => {
+    // 检查是否已经连接钱包
+    const checkConnection = async () => {
+      if (window.ethereum) {
+        try {
+          const web3Provider = new ethers.providers.Web3Provider(window.ethereum as any);
+          const accounts = await web3Provider.listAccounts();
+          if (accounts.length > 0) {
+            setProvider(web3Provider);
+            setSigner(web3Provider.getSigner());
+            setAccount(accounts[0]);
+            setIsConnected(true);
+          }
+        } catch (error) {
+          console.error("Error checking wallet connection:", error);
+        }
+      }
+    };
+    checkConnection();
+  }, []);
 
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setConnectedAccount(accounts[0]);
-
-        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(newProvider);
-
-        const newSigner = newProvider.getSigner();
-        setSigner(newSigner);
+        const web3Provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        await web3Provider.send("eth_requestAccounts", []);
+        const accounts = await web3Provider.listAccounts();
+        if (accounts.length > 0) {
+          setProvider(web3Provider);
+          setSigner(web3Provider.getSigner());
+          setAccount(accounts[0]);
+          setIsConnected(true);
+        }
       } catch (error) {
-        console.error('Error connecting to wallet:', error);
+        console.error("Error connecting wallet:", error);
       }
     } else {
-      alert('Please install MetaMask!');
+      console.error("MetaMask is not installed");
     }
   };
 
   const disconnectWallet = () => {
-    setConnectedAccount(null);
     setProvider(null);
     setSigner(null);
+    setAccount(null);
+    setIsConnected(false);
   };
-
-  useEffect(() => {
-    const checkIfWalletIsConnected = async () => {
-      if (window.ethereum) {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts.length > 0) {
-          setConnectedAccount(accounts[0]);
-
-          const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-          setProvider(newProvider);
-
-          const newSigner = newProvider.getSigner();
-          setSigner(newSigner);
-        }
-      }
-    };
-    checkIfWalletIsConnected();
-  }, []);
 
   return (
     <div>
-      {connectedAccount ? (
+      {isConnected ? (
         <div>
-          <button onClick={disconnectWallet}>Disconnect</button>
-          <p>Connected with <strong>{connectedAccount}</strong></p>
+          <p>Connected with account: {account}</p>
+          <button onClick={disconnectWallet}>Disconnect Wallet</button>
         </div>
       ) : (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <button onClick={connectWallet}>Connect MetaMask</button>
       )}
     </div>
   );
 };
 
-export default ConnectWallet;
+export default WalletConnection;
