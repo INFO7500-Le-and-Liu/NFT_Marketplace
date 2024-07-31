@@ -5,6 +5,7 @@ const JWT = process.env.REACT_APP_PINATA_JWT || "";
 
 const UploadComponent: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  // set price config
   const [price, setPrice] = useState<string>("");  
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
