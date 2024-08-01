@@ -15,6 +15,19 @@ import UploadComponent from './components/UploadComponent'; // 替换为你的 .
 function App() {
   const [nfts, setNfts] = useState<NFT[]>([]);
 
+  return (
+    <div className="App">
+      {/* <ConnectWallet /> */}
+      <WalletConnection/>
+      <UploadComponent />
+      <DisplayNFTs/>
+    </div>
+  );
+}
+
+export default App;
+
+
   // const loadNFTs = async () => {
   //   try {
   //     const contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -36,16 +49,3 @@ function App() {
   // useEffect(() => {
   //   loadNFTs();
   // }, []);
-
-  return (
-    <div className="App">
-      {/* <ConnectWallet /> */}
-      <WalletConnection/>
-      <UploadComponent />
-      {/* <MintNFT contractAddress={contractAddress} contractABI={contractABI}/> */}
-      <DisplayNFTs/>
-    </div>
-  );
-}
-
-export default App;

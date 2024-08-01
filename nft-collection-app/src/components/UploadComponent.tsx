@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {mintNFT} from './MintNFT';
+import {mintNFT} from '../services/MintNFT';
 
 const JWT = process.env.REACT_APP_PINATA_JWT || "";
 
@@ -49,11 +49,16 @@ const UploadComponent: React.FC = () => {
 
       // mint NFT
       try {
-          await mintNFT(resData.IpfsHash, price);
+          const tokenID = await mintNFT(resData.IpfsHash, price);
           console.log("NFT has been minted successfully!");
+         // window.location.reload();
       } catch (mintError) {
           console.error("Error minting NFT:", mintError);
       }
+
+
+
+
     } catch (error) {
       console.error("Error uploading files:", error);
     }

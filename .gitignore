@@ -1,6 +1,7 @@
 .DS_STORE
 .DS_Store
-node_modules
+*/node_modules
+test_iipfs
 scripts/flow/*/.flowconfig
 .flowconfig
 *~
