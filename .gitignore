@@ -8,10 +8,15 @@
 
 # Node
 /node_modules
+/node_modules/*
+*/node_modules
 npm-debug.log
 yarn-error.log
 
 # IDEs and editors
+.build
+*.build
+*/build
 .idea/
 .project
 .classpath
@@ -40,3 +45,4 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.env
