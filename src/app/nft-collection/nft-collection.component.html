@@ -1,7 +1,0 @@
-<input type="file" (change)="onFileSelected($event)" />
-<ul>
-  <li *ngFor="let file of files">
-    <a [href]="file.url" target="_blank">{{ file.name }}</a>
-  </li>
-</ul>
-<button (click)="connectWallet()">连接钱包</button>
