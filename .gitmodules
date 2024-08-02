@@ -4,3 +4,6 @@
 [submodule "NFT/lib/openzeppelin-contracts"]
 	path = NFT/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "NFT/lib/openzeppelin-contracts-upgradeable"]
+	path = NFT/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable

@@ -20,7 +20,8 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
     // Events
     event NFTMinted(uint256 indexed tokenId, address indexed creator, string tokenURI, uint256 price);
     event NFTListed(uint256 indexed tokenId, uint256 price);
-    // event NFTPurchased(uint256 indexed tokenId, address indexed buyer, uint256 price);
+     event NFTPurchased(uint256 indexed tokenId, address indexed buyer, uint256 price);
+
 
     constructor() ERC721("NFTMarketplace", "NFTM") Ownable(msg.sender) {}
 
@@ -58,4 +59,20 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
     function getAllTokens() public view returns (uint256[] memory) {
         return _allTokens;
     }
+
+        // Function to purchase an NFT
+    function purchaseNFT(uint256 tokenId) public payable {
+        NFT memory nft = _nfts[tokenId];
+        require(nft.isForSale, "NFT is not for sale");
+        require(msg.value >= nft.price, "Insufficient payment");
+
+        address seller = ownerOf(tokenId);
+        _transfer(seller, msg.sender, tokenId);
+        payable(seller).transfer(msg.value);
+
+        _nfts[tokenId].isForSale = true;
+
+        emit NFTPurchased(tokenId, msg.sender, nft.price);
+    }
+
 }
