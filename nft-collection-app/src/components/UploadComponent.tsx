@@ -56,8 +56,8 @@ const UploadComponent: React.FC = () => {
           console.error("Error minting NFT:", mintError);
       }
 
-
-
+      //TODO: 套娃
+      //data append name/despc/ID
 
     } catch (error) {
       console.error("Error uploading files:", error);
