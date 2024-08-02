@@ -7,7 +7,8 @@ import React, { useState, useEffect } from 'react';
 import WalletConnection from './components/ConnectWallet';
 import DisplayNFTs from './components/DisplayNFT';
 import { NFT } from './type';
-import UploadComponent from './components/UploadComponent'; // 替换为你的 .tsx 文件路径
+import UploadComponent from './components/UploadComponent'; 
+import PurchaseNFTComponent from './components/PurchaseComponent'
 // import dotenv from 'dotenv';
 
 // dotenv.config();
@@ -17,14 +18,14 @@ function App() {
 
   return (
     <div className="App">
-      {/* <ConnectWallet /> */}
-      <WalletConnection/>
+      <WalletConnection />
       <UploadComponent />
-      <DisplayNFTs/>
+      <PurchaseNFTComponent /> 
+      <DisplayNFTs />
     </div>
   );
-}
-
+  }
+  
 export default App;
 
 
