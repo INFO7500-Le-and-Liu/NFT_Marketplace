@@ -1,4 +1,6 @@
 # Compiler files
+.DS_Store
+.DS_STORE
 cache/
 out/
 
