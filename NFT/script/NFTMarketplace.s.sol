@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "../src/NFTMarketplace.sol"; // set the path
+//import "../src/UpgradeNFT.sol" //use for upgrade the NFTmarket place
 
 contract DeployNFTMarketplace is Script {
     function run() public {

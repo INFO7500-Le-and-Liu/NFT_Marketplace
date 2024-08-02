@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract NFTMarketplace is ERC721URIStorage, Ownable {
-    uint256 private _currentTokenId = 0;  
-    uint256[] private _allTokens; // Array to store all token IDs
+contract NFTMarketplace is Initializable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
+    uint256 private _currentTokenId = 0;
 
     struct NFT {
         uint256 tokenId;
@@ -15,15 +15,20 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         bool isForSale;
     }
 
-    mapping(uint256 => NFT) private _nfts;  // Mapping from token ID to NFT struct
+    mapping(uint256 => NFT) private _nfts;
+    uint256[] private _allTokens;
 
     // Events
     event NFTMinted(uint256 indexed tokenId, address indexed creator, string tokenURI, uint256 price);
     event NFTListed(uint256 indexed tokenId, uint256 price);
     event NFTPurchased(uint256 indexed tokenId, address indexed buyer, uint256 price);
 
-
-    constructor() ERC721("NFTMarketplace", "NFTM") Ownable(msg.sender) {}
+    // init function
+    function initialize() public initializer {
+        __ERC721_init("NFTMarketplace", "NFTM");
+        __Ownable_init(msg.sender);
+    }
+    
 
     // Function to mint a new NFT
     function mintNFT(string memory tokenURI, uint256 price) public returns (uint256) {
@@ -32,8 +37,8 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         _currentTokenId++;  // Increment the token ID counter
         uint256 newTokenId = _currentTokenId;
 
-        _mint(msg.sender, newTokenId); // Mint the new token
-        _setTokenURI(newTokenId, tokenURI); // Set the token URI
+        _mint(msg.sender, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
 
         _nfts[newTokenId] = NFT({
             tokenId: newTokenId,
@@ -42,7 +47,7 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
             isForSale: true
         });
 
-        _allTokens.push(newTokenId);  // Store the new token ID in the array
+        _allTokens.push(newTokenId);
 
         emit NFTMinted(newTokenId, msg.sender, tokenURI, price);
 
@@ -60,7 +65,7 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         return _allTokens;
     }
 
-        // Function to purchase an NFT
+    // Function to purchase an NFT
     function purchaseNFT(uint256 tokenId) public payable {
         NFT memory nft = _nfts[tokenId];
         require(nft.isForSale, "NFT is not for sale");
@@ -70,9 +75,19 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         _transfer(seller, msg.sender, tokenId);
         payable(seller).transfer(msg.value);
 
-        _nfts[tokenId].isForSale = true;
+        _nfts[tokenId].isForSale = true;///////
 
         emit NFTPurchased(tokenId, msg.sender, nft.price);
     }
 
+    // Function to list an NFT for sale
+    function listNFT(uint256 tokenId, uint256 price) public {
+        require(ownerOf(tokenId) == msg.sender, "Only owner can list the NFT");
+        require(price > 0, "Price must be greater than zero");
+
+        _nfts[tokenId].price = price;
+        _nfts[tokenId].isForSale = true;
+
+        emit NFTListed(tokenId, price);
+    }
 }

@@ -25,6 +25,7 @@ export async function mintNFT(cid: any, price: string) {
     const transaction = await contract.mintNFT(tokenURI, ethers.utils.parseEther(price));
     const receipt = await transaction.wait();
 
+    //return transcation hash
     console.log("transaction:", transaction);
     console.log("Transaction Hash:", transaction.hash);
 
