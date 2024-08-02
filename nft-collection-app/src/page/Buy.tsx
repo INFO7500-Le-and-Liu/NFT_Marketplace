@@ -1,41 +1,32 @@
-// // src/pages/Buy.tsx
-// import React, { useEffect, useState } from 'react';
-// import { useParams } from 'react-router-dom';
-// import { NFT } from '../type';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
-// const Buy: React.FC = () => {
-//   const { tokenId } = useParams<{ tokenId: string }>();
-//   const [nft, setNft] = useState<NFT | null>(null);
+const Buy: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
-//   useEffect(() => {
-//     const loadNFT = async () => {
-//       try {
-//         if (tokenId) {
-//           const nftData = await fetchNFTDetails(tokenId);
-//           setNft(nftData);
-//         }
-//       } catch (err) {
-//         console.error('Error fetching NFT details:', err);
-//       }
-//     };
+  const name = queryParams.get('name');
+  const price = queryParams.get('price');
+  const description = queryParams.get('description');
+  const image = queryParams.get('image');
 
-//     loadNFT();
-//   }, [tokenId]);
+  if (!name || !price || !description || !image) {
+    return <p>No data available.</p>;
+  }
 
-//   if (!nft) return <div>Loading...</div>;
+  return (
+    <div>
+      <h1>{name}</h1>
+      <img
+        src={image}
+        alt={name}
+        width="300"
+        onError={(e) => e.currentTarget.src = 'fallback-image.png'}
+      />
+      <p>Price: {price}</p>
+      <p>Description: {description}</p>
+    </div>
+  );
+};
 
-//   return (
-//     <div className="buy">
-//       <h1>Buy NFT</h1>
-//       <div className="nft-details">
-//         <img src={`https://ipfs.io/ipfs/${nft.cid}`} alt={nft.name} />
-//         <h2>{nft.name}</h2>
-//         <p>Price: {nft.price} ETH</p>
-//         <p>Quantity: {nft.quantity}</p>
-//         {/* Add any additional details or purchase logic here */}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Buy;
+export default Buy;

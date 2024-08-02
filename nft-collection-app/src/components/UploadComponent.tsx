@@ -41,6 +41,7 @@ const UploadComponent: React.FC = () => {
     }
  
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+    const url1 = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
     try {
       const data = new FormData();
       Array.from(selectedFiles).forEach((file) => {
@@ -80,7 +81,7 @@ const UploadComponent: React.FC = () => {
         tokenID
       };
 
-      const responseo = await fetch(url, {
+      const responseo = await fetch(url1, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
