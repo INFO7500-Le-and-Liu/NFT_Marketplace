@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import {mintNFT} from './MintNFT';
+import { mintNFT } from '../services/MintNFT';
  
 const JWT = process.env.REACT_APP_PINATA_JWT || "";
+const JWTO = process.env.REACT_APP_PINATA_JWT_OUTSIDE || "";
  
 const UploadComponent: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   // set price config
   const [price, setPrice] = useState<string>("");  
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [image, setImage] = useState<string>("");  
  
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -17,7 +21,19 @@ const UploadComponent: React.FC = () => {
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(event.target.value);  
   };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);  
+  };
+
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(event.target.value);  
+  };
  
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImage(event.target.value);  
+  };
+
   const pinDirectoryToPinata = async () => {
     if (!selectedFiles) {
       console.error("No files selected");
@@ -46,24 +62,58 @@ const UploadComponent: React.FC = () => {
  
       const resData = await response.json();
       console.log('CID:', resData.IpfsHash);  // get and print CID
- 
+      const cid = resData.IpfsHash;
+      let tokenID = 0;
       // mint NFT
       try {
-          await mintNFT(resData.IpfsHash, price);
+          tokenID = await mintNFT(resData.IpfsHash, price);
           console.log("NFT has been minted successfully!");
+         // window.location.reload();
       } catch (mintError) {
           console.error("Error minting NFT:", mintError);
       }
+      const nftInfoo = {
+        name,
+        price,
+        description,
+        cid,
+        tokenID
+      };
+
+      const responseo = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${JWTO}`,
+        },
+        body: JSON.stringify(nftInfoo),
+      });
+      
+
+      if (!responseo.ok) {
+        console.error('Error responseo from Pinata:', await responseo.text());
+        throw new Error('Failed to upload json to IPFS');
+      }
+      
+      const result = await responseo.json();
+      console.log(result);
+
+ 
     } catch (error) {
       console.error("Error uploading files:", error);
     }
   };
  
+      
+
   return (
     <div>
       <label className="form-label">Choose Files</label>
       <input type="file" multiple onChange={changeHandler} />
       <input type="text" value={price} onChange={handlePriceChange} placeholder="Enter price" />
+      <input type="text" value={name} onChange={handleNameChange} placeholder="Enter name" />
+      {/* <input type="text" value={image} onChange={handleImageChange} placeholder="Enter image" /> */}
+      <input type="text" value={description} onChange={handleDescriptionChange} placeholder="Enter description" />
       <button onClick={pinDirectoryToPinata}>Upload to IPFS and Mint NFT</button>
     </div>
   );
