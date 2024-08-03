@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { mintNFT } from '../services/MintNFT';
-
 import './UploadComponent.css';
- 
+
 const JWT = process.env.REACT_APP_PINATA_JWT || "";
 const JWTO = process.env.REACT_APP_PINATA_JWT_OUTSIDE || "";
 
@@ -118,13 +117,40 @@ const UploadComponent: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="upload-container">
       <label className="form-label">Choose Files</label>
-      <input type="file" multiple onChange={changeHandler} />
-      <input type="text" value={price} onChange={handlePriceChange} placeholder="Enter price" />
-      <input type="text" value={name} onChange={handleNameChange} placeholder="Enter name" />
-      <input type="text" value={description} onChange={handleDescriptionChange} placeholder="Enter description" />
-      <button onClick={pinDirectoryToPinata} disabled={loading}>
+      <input
+        type="file"
+        multiple
+        onChange={changeHandler}
+        className="file-input"
+      />
+      <input
+        type="text"
+        value={price}
+        onChange={handlePriceChange}
+        placeholder="Enter price"
+        className="text-input"
+      />
+      <input
+        type="text"
+        value={name}
+        onChange={handleNameChange}
+        placeholder="Enter name"
+        className="text-input"
+      />
+      <input
+        type="text"
+        value={description}
+        onChange={handleDescriptionChange}
+        placeholder="Enter description"
+        className="text-input"
+      />
+      <button
+        onClick={pinDirectoryToPinata}
+        disabled={loading}
+        className="upload-button"
+      >
         {loading ? 'Uploading...' : 'Upload to IPFS and Mint NFT'}
       </button>
     </div>
