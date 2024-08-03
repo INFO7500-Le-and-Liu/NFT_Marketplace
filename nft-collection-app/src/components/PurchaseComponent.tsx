@@ -31,7 +31,7 @@ const PurchaseNFTComponent: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch metadata from IPFS');
       }
-      const data: NFTMetadata = await response.json();
+      const data: NFTMetadata = await response.json();//////
       setMetadata(data);
       setTokenId(ethers.BigNumber.from(data.tokenID.hex).toString());
       setPrice(data.price);
