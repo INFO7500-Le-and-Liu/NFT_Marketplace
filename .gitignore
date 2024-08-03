@@ -1,6 +1,7 @@
 .DS_STORE
 .DS_Store
-node_modules
+*/node_modules
+test_iipfs
 scripts/flow/*/.flowconfig
 .flowconfig
 *~
@@ -81,3 +82,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.DS_Store
+/NFT/broadcast
+/test_iipfs

@@ -1,14 +1,14 @@
 // src/services/web3Service.ts
 import { ethers } from 'ethers';
- 
+
 class Web3Service {
   provider: ethers.providers.Web3Provider | null = null;
   signer: ethers.Signer | null = null;
- 
+
   constructor() {
     this.init();
   }
- 
+
   async init() {
     if (window.ethereum) {
       this.provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -24,7 +24,6 @@ class Web3Service {
       console.error("MetaMask is not installed");
     }
   }
- 
   async connectWallet() {
     if (this.provider) {
       try {
@@ -36,5 +35,5 @@ class Web3Service {
     }
   }
 }
- 
+
 export const web3Service = new Web3Service();

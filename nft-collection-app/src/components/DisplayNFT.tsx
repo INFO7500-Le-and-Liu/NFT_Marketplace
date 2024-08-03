@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 interface NFT {
   tokenId: string;
   // name: string;
-  image: string;
+  image: string;//url
   // description: string;
 }
 
@@ -47,7 +47,7 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
         const fetchedNFTs = await Promise.all(
           cids.map(async (cid: string, index: number) => {
             try {
-              // const metadataResponse = await fetch(`${IPFS_GATEWAY}${cid}`); // later job
+              // const metadataResponse = await fetch(`${IPFS_GATEWAY}${cid}`); //?
               // const metadata = await metadataResponse.json();
 
               return {

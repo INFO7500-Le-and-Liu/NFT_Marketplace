@@ -3,7 +3,7 @@
 import { ethers } from 'ethers';
  
 import nftCollection from '../abi/contract.json'; // ABI file
-import { web3Service } from '../services/Web3';
+import {web3Service} from './Web3';
  
 const contractAddress: string = '0x1F0B7cbAa20bA250961905d03c940277491025e5'; // contract address
 const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
@@ -23,12 +23,23 @@ export async function mintNFT(cid: any, price: string) {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
     
     const transaction = await contract.mintNFT(tokenURI, ethers.utils.parseEther(price));
-    await transaction.wait();
+    const receipt = await transaction.wait();
  
-    console.log("NFT has been minted: Transaction Hash:", transaction.hash);
-    return transaction.hash;
+    console.log("transaction:", transaction);
+    console.log("Transaction Hash:", transaction.hash);
+ 
+    const event = receipt.events?.find((event: { event: string; }) => event.event === "NFTMinted");
+    const tokenId = event?.args?.tokenId;
+ 
+    console.log(`Minted NFT with token ID: ${tokenId}`);
+    
+    return tokenId;
   } catch (error) {
       console.error("Error in mintNFT function:", error);
       throw error;
   }
 }
+
+
+ 
+ 

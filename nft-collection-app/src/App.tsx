@@ -1,21 +1,33 @@
 // src/App.tsx
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-// import { signer } from './services/Web3';
+// import { ethers } from 'ethers';
+// import { signer } from './Web3';
+// import ConnectWallet from './components/Wallet';
 // import MintNFT from './components/MintNFT';
+import WalletConnection from './components/ConnectWallet';
 import DisplayNFTs from './components/DisplayNFT';
 import { NFT } from './type';
-import UploadComponent from './components/UploadComponent'; // 替换为你的 .tsx 文件路径
+import UploadComponent from './components/UploadComponent'; 
+import PurchaseNFTComponent from './components/PurchaseComponent'
 // import dotenv from 'dotenv';
-import nftCollection from './abi/contract.json'; // 导入 ABI
-import WalletConnection from './components/ConnectWallet';
 
-const contractAddress: string = '0x1F0B7cbAa20bA250961905d03c940277491025e5'; // 合约地址
-const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
 // dotenv.config();
 
 function App() {
   const [nfts, setNfts] = useState<NFT[]>([]);
+
+  return (
+    <div className="App">
+      <WalletConnection />
+      <UploadComponent />
+      <PurchaseNFTComponent /> 
+      <DisplayNFTs />
+    </div>
+  );
+  }
+  
+export default App;
+
 
   // const loadNFTs = async () => {
   //   try {
@@ -38,16 +50,3 @@ function App() {
   // useEffect(() => {
   //   loadNFTs();
   // }, []);
-
-  return (
-    <div className="App">
-      {/* <ConnectWallet /> */}
-      <WalletConnection/>
-      <UploadComponent />
-      {/* <MintNFT contractAddress={contractAddress} contractABI={contractABI}/> */}
-      <DisplayNFTs/>
-    </div>
-  );
-}
-
-export default App;

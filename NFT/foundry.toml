@@ -8,6 +8,7 @@ solc = "/usr/local/bin/solc"
 
 [dependencies]
 # openzeppelin = {git = "https://github.com/OpenZeppelin/openzeppelin-contracts.git", tag = "v4.7.3" }
+# forge-std = { git = "https://github.com/foundry-rs/forge-std.git", tag = "v1.0.0" }
 
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"
