@@ -84,3 +84,4 @@ testem.log
 Thumbs.db
 .DS_Store
 /NFT/broadcast
+/test_iipfs

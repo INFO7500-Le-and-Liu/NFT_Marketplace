@@ -24,7 +24,6 @@ class Web3Service {
       console.error("MetaMask is not installed");
     }
   }
-
   async connectWallet() {
     if (this.provider) {
       try {
