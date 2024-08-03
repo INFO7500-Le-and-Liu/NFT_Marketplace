@@ -31,7 +31,7 @@ const PurchaseNFTComponent: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch metadata from IPFS');
       }
-      const data: NFTMetadata = await response.json();//////
+      const data: NFTMetadata = await response.json();
       setMetadata(data);
       setTokenId(ethers.BigNumber.from(data.tokenID.hex).toString());
       setPrice(data.price);
@@ -59,7 +59,7 @@ const PurchaseNFTComponent: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="purchase-container">
       <input
         type="text"
         placeholder="Enter IPFS Hash"
@@ -76,7 +76,6 @@ const PurchaseNFTComponent: React.FC = () => {
           <img
             src={`${IPFS_GATEWAY}${metadata.cid}`}
             alt={metadata.name}
-            width="200"
             onError={(e) => e.currentTarget.src = '../../public/logo192.png'}
           />
           <p>{metadata.description}</p>

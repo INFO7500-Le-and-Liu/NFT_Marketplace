@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
 import './DisplayNFT.css';
 import { ethers } from 'ethers';
-
 
 interface NFT {
   name: string;
@@ -12,7 +10,6 @@ interface NFT {
   cid: string;
   tokenID: string;
 }
-
 
 // NFT metadata
 interface NFTMetadata {
@@ -38,12 +35,12 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
   useEffect(() => {
     const fetchNFTs = async () => {
       const jwt = process.env.REACT_APP_PINATA_JWT_OUTSIDE;
-      console.log('JWT Token:', jwt); // debug, need be removed
+      console.log('JWT Token:', jwt); // debug, need to be removed
 
       const options = {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${jwt}` // inset into header
+          Authorization: `Bearer ${jwt}`
         }
       };
 
@@ -103,15 +100,14 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
   }
 
   return (
-    <div>
+    <div className="nft-container">
       {nfts.length === 0 ? <p>No NFTs found.</p> : null}
       {nfts.map((nft) => (
-        <div key={nft.tokenID}>
+        <div key={nft.tokenID} className="nft-card">
           <h3>{nft.name}</h3>
           <img
             src={nft.image}
             alt={nft.name}
-            width="400"
             onError={(e) => e.currentTarget.src = '../../public/logo192.png'}
           />
           <p>{nft.description}</p>
