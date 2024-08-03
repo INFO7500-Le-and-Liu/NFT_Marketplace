@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import './ConnectWallet.css';
 
 const WalletConnection: React.FC = () => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);

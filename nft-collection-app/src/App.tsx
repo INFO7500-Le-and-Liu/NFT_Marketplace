@@ -8,7 +8,8 @@ import WalletConnection from './components/ConnectWallet';
 import DisplayNFTs from './components/DisplayNFT';
 import { NFT } from './type';
 import UploadComponent from './components/UploadComponent'; 
-import PurchaseNFTComponent from './components/PurchaseComponent'
+import PurchaseNFTComponent from './components/PurchaseComponent';
+import './App.css';
 // import dotenv from 'dotenv';
 
 // dotenv.config();

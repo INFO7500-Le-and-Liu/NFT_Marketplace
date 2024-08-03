@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+
+import './DisplayNFT.css';
 import { ethers } from 'ethers';
+
 
 interface NFT {
   name: string;
