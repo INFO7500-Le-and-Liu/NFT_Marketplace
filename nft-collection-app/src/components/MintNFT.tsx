@@ -1,134 +1,34 @@
-import React, { useState } from 'react';
+// MintNFT.tsx
+// import React from 'react';
 import { ethers } from 'ethers';
-import { signer } from '../Web3'; 
-
-const JWT = "PINATA_JWT"; // 确保使用正确的 JWT
-const GATEWAY = "yellow-wrong-piranha-786.mypinata.cloud"; // 确保使用正确的网关 URL
-
-interface MintNFTProps {
-  contractAddress: string;
-  contractABI: any;
-}
-
-const MintNFT: React.FC<MintNFTProps> = ({ contractAddress, contractABI }) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [minting, setMinting] = useState(false);
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+ 
+import nftCollection from '../abi/contract.json'; // ABI file
+import { web3Service } from '../services/Web3';
+ 
+const contractAddress: string = '0x1F0B7cbAa20bA250961905d03c940277491025e5'; // contract address
+const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
+ 
+// export the function
+export async function mintNFT(cid: any, price: string) {
+  try {
+    // make sure not null
+    if (!web3Service.signer) {
+      throw new Error("No signer available. Please connect to a wallet.");
     }
-  };
-
-  const uploadToIPFS = (file: File): Promise<string> => {
-    if (!file) return Promise.reject(new Error('No file selected'));
+    const signer = web3Service.signer;
+ 
+    const tokenURI = `https://gateway.pinata.cloud/ipfs/${cid}`
+ 
+    // creat contract init
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
     
-    const data = new FormData();
-    data.append("file", file);
-
-    return fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${JWT}`,
-      },
-      body: data,
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.text().then(text => {
-            console.error('Error response from Pinata:', text);
-            return Promise.reject(new Error('Failed to upload file to IPFS'));
-          });
-        }
-        return response.json();
-      })
-      .then(result => {
-        if (result.IpfsHash) {
-          return `https://${GATEWAY}/ipfs/${result.IpfsHash}`;
-        } else {
-          return Promise.reject(new Error('Failed to upload file to IPFS'));
-        }
-      });
-  };
-
-  const mintNFT = () => {
-    if (!file || !name || !description || !price) return;
-    setMinting(true);
-
-    uploadToIPFS(file)
-      .then(imageUrl => {
-        console.log('Image URI:', imageUrl);
-
-        const metadata = {
-          name,
-          description,
-          image: imageUrl,
-        };
-
-        const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-        const metadataData = new FormData();
-        metadataData.append("file", metadataBlob, "metadata.json");
-
-        return fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${JWT}`,
-          },
-          body: metadataData,
-        });
-      })
-      .then(metadataResponse => {
-        if (!metadataResponse.ok) {
-          return metadataResponse.text().then(text => {
-            console.error('Error response from Pinata:', text);
-            return Promise.reject(new Error('Failed to upload metadata to IPFS'));
-          });
-        }
-        return metadataResponse.json();
-      })
-      .then(metadataResult => {
-        if (metadataResult.IpfsHash) {
-          const metadataUrl = `https://${GATEWAY}/ipfs/${metadataResult.IpfsHash}`;
-          console.log('Metadata URL:', metadataUrl);
-
-          const contract = new ethers.Contract(contractAddress, contractABI, signer);
-          const priceInWei = ethers.utils.parseEther(price);
-
-          return contract.mintNFT(metadataUrl, priceInWei);
-        } else {
-          return Promise.reject(new Error('Failed to upload metadata to IPFS'));
-        }
-      })
-      .then(transaction => transaction.wait())
-      .then(() => {
-        alert('NFT Minted!');
-        setFile(null);
-        setName('');
-        setDescription('');
-        setPrice('');
-      })
-      .catch(error => {
-        console.error('Error minting NFT:', error);
-      })
-      .finally(() => {
-        setMinting(false);
-      });
-  };
-
-  return (
-    <div>
-      <input type="file" onChange={onFileChange} />
-      <input type="text" placeholder="NFT Name" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="text" placeholder="NFT Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <input type="text" placeholder="NFT Price in ETH" value={price} onChange={(e) => setPrice(e.target.value)} />
-      <button onClick={mintNFT} disabled={minting}>
-        {minting ? 'Minting...' : 'Mint NFT'}
-      </button>
-    </div>
-  );
-};
-
-export default MintNFT;
+    const transaction = await contract.mintNFT(tokenURI, ethers.utils.parseEther(price));
+    await transaction.wait();
+ 
+    console.log("NFT has been minted: Transaction Hash:", transaction.hash);
+    return transaction.hash;
+  } catch (error) {
+      console.error("Error in mintNFT function:", error);
+      throw error;
+  }
+}
