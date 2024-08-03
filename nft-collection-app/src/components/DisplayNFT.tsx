@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import './DisplayNFT.css';
 
-// NFT type
+import './DisplayNFT.css';
+import { ethers } from 'ethers';
+
+
 interface NFT {
-  tokenId: string;
-  // name: string;
-  image: string;//url
-  // description: string;
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+  cid: string;
+  tokenID: string;
+}
+
+
+// NFT metadata
+interface NFTMetadata {
+  name: string;
+  price: string;
+  description: string;
+  cid: string;
+  tokenID: {
+    type: string;
+    hex: string;
+  };
 }
 
 interface DisplayNFTsProps {}
 
-// pinata gateway
 const PINATA_API_URL = 'https://api.pinata.cloud/data/pinList?includeCount=true';
 const IPFS_GATEWAY = 'https://gateway.pinata.cloud/ipfs/';
 
@@ -21,20 +37,20 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
 
   useEffect(() => {
     const fetchNFTs = async () => {
-      const jwt = process.env.REACT_APP_PINATA_JWT;
+      const jwt = process.env.REACT_APP_PINATA_JWT_OUTSIDE;
       console.log('JWT Token:', jwt); // debug, need be removed
-    
+
       const options = {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${jwt}`  // inset into header
+          Authorization: `Bearer ${jwt}` // inset into header
         }
       };
 
       try {
         const response = await fetch(PINATA_API_URL, options);
         const data = await response.json();
-        console.log('API Response:', data); 
+        console.log('API Response:', data);
 
         const files = data.rows;
         if (!files) {
@@ -48,14 +64,21 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
         const fetchedNFTs = await Promise.all(
           cids.map(async (cid: string, index: number) => {
             try {
-              // const metadataResponse = await fetch(`${IPFS_GATEWAY}${cid}`); //?
-              // const metadata = await metadataResponse.json();
+              const metadataResponse = await fetch(`${IPFS_GATEWAY}${cid}`);
+              if (!metadataResponse.ok) {
+                throw new Error('Failed to fetch metadata from IPFS');
+              }
+              const metadata: NFTMetadata = await metadataResponse.json();
+              console.log("Data", index);
+              console.log("metadata", metadata);
 
               return {
-                tokenId: cid,
-                // name: metadata.name || `NFT ${index + 1}`,
-                image: `${IPFS_GATEWAY}${cid}`,
-                // description: metadata.description || 'No description available'
+                name: metadata.name,
+                price: metadata.price,
+                description: metadata.description,
+                image: `${IPFS_GATEWAY}${metadata.cid}`,
+                cid: metadata.cid,
+                tokenID: ethers.BigNumber.from(metadata.tokenID.hex).toString(),
               };
             } catch (err) {
               console.error('Error fetching metadata for CID:', cid, err);
@@ -76,19 +99,24 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
   }, []);
 
   if (loading) {
-    return <p>Loading NFTs...</p >;
+    return <p>Loading NFTs...</p>;
   }
 
   return (
     <div>
-      {nfts.length === 0 ? <p>No NFTs found.</p > : null}
+      {nfts.length === 0 ? <p>No NFTs found.</p> : null}
       {nfts.map((nft) => (
-        <div key={nft.tokenId}>
-          {/* <h3>{nft.name}</h3> */}
-          {/* < img src={nft.image} alt={nft.name} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} /> */}
-          < img src={nft.image} alt={'123'} width="200" onError={(e) => e.currentTarget.src = '../../public/logo192.png'} />
-
-          {/* <p>{nft.description}</p > */}
+        <div key={nft.tokenID}>
+          <h3>{nft.name}</h3>
+          <img
+            src={nft.image}
+            alt={nft.name}
+            width="200"
+            onError={(e) => e.currentTarget.src = '../../public/logo192.png'}
+          />
+          <p>{nft.description}</p>
+          <p>Price: {nft.price} ETH</p>
+          <p>Token ID: {nft.tokenID}</p>
         </div>
       ))}
     </div>
