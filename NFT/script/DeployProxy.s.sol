@@ -33,7 +33,7 @@ contract DeployProxyScript is Script {
         );
 
         // Log the deployed contract address
-        console.log("NFTMarketplace deployed to:", address(proxy));
+        console.log("proxy deployed to:", address(proxy));
 
         // Stop broadcasting transactions
         vm.stopBroadcast();

@@ -70,6 +70,14 @@ const UploadComponent: React.FC = () => {
         console.log("NFT has been minted successfully!");
       } catch (mintError) {
         console.error("Error minting NFT:", mintError);
+        setLoading(false); // stop loading when failed to mint
+        return; // stop next operation
+      }
+
+      if (!tokenID) {
+        console.error("Minting NFT failed, tokenID is undefined.");
+        setLoading(false);
+        return;
       }
 
       const nftInfoo = {
