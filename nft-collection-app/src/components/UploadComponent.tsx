@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { mintNFT } from '../services/MintNFT';
+import './UploadComponent.css';
  
 const JWT = process.env.REACT_APP_PINATA_JWT || "";
 const JWTO = process.env.REACT_APP_PINATA_JWT_OUTSIDE || "";

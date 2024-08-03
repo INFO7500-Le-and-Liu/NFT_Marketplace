@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
-
+import './PurchaseComponent.css'; // 导入 CSS 文件
 import { purchaseNFT } from '../services/PurchaseNFT'; // 导入 purchaseNFT 函数
 
 const IPFS_GATEWAY = 'https://gateway.pinata.cloud/ipfs/';
