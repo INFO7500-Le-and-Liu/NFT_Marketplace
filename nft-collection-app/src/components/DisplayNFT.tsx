@@ -75,7 +75,7 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
                 description: metadata.description,
                 image: `${IPFS_GATEWAY}${metadata.cid}`,
                 cid: metadata.cid,
-                tokenID: ethers.BigNumber.from(data.tokenID.hex).toString(),
+                tokenID: ethers.BigNumber.from(metadata.tokenID.hex).toString(),
               };
             } catch (err) {
               console.error('Error fetching metadata for CID:', cid, err);
@@ -108,7 +108,7 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
           <img
             src={nft.image}
             alt={nft.name}
-            width="200"
+            width="400"
             onError={(e) => e.currentTarget.src = '../../public/logo192.png'}
           />
           <p>{nft.description}</p>
