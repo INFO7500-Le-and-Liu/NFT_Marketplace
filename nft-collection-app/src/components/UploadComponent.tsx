@@ -100,6 +100,7 @@ const UploadComponent: React.FC = () => {
 
       const result = await responseo.json();
       console.log("result: ", result);
+      console.log('CID:', result.IpfsHash);
 
     } catch (error) {
       console.error("Error uploading files:", error);

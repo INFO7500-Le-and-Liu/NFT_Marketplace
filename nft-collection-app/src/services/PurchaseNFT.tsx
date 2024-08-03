@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import nftCollection from '../abi/NFTMarketplace.json'; // ABI file
 import { web3Service } from './Web3';
 
-const contractAddress: string = '0x4a0bB8932CAB92BC97d0DB30612cd66DB2Cd4E5D'; // 合约地址
+const contractAddress: string = '0x69017e0527c43F63Ee597144dBE2B5012Ce2c66A'; // 合约地址
 const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
 
 // 导出函数
