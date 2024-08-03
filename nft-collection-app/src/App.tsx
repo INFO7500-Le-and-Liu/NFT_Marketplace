@@ -21,8 +21,8 @@ function App() {
     <div className="App">
       <WalletConnection />
       <UploadComponent />
-      <PurchaseNFTComponent /> 
       <DisplayNFTs />
+      <PurchaseNFTComponent /> 
     </div>
   );
   }

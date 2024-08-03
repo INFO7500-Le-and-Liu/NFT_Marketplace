@@ -2,10 +2,10 @@
 // import React from 'react';
 import { ethers } from 'ethers';
  
-import nftCollection from '../abi/contract.json'; // ABI file
+import nftCollection from '../abi/NFTMarketplace.json'; // ABI file
 import {web3Service} from './Web3';
  
-const contractAddress: string = '0x1F0B7cbAa20bA250961905d03c940277491025e5'; // contract address
+const contractAddress: string = '0x69017e0527c43F63Ee597144dBE2B5012Ce2c66A'; // contract address
 const contractABI: ethers.ContractInterface = nftCollection.abi; // ABI
  
 // export the function

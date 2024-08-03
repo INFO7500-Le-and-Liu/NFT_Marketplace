@@ -111,7 +111,7 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
           <img
             src={nft.image}
             alt={nft.name}
-            width="200"
+            width="400"
             onError={(e) => e.currentTarget.src = '../../public/logo192.png'}
           />
           <p>{nft.description}</p>
