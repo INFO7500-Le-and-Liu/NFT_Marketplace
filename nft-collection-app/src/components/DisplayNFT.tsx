@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+
+import './DisplayNFT.css';
 import { ethers } from 'ethers';
+
 
 interface NFT {
   name: string;
@@ -75,7 +78,7 @@ const DisplayNFTs: React.FC<DisplayNFTsProps> = () => {
                 description: metadata.description,
                 image: `${IPFS_GATEWAY}${metadata.cid}`,
                 cid: metadata.cid,
-                tokenID: ethers.BigNumber.from(data.tokenID.hex).toString(),
+                tokenID: ethers.BigNumber.from(metadata.tokenID.hex).toString(),
               };
             } catch (err) {
               console.error('Error fetching metadata for CID:', cid, err);
